@@ -24,7 +24,7 @@ class Block(nn.Module):
 
     def forward(self, x):
         x = self.conv(x)
-        if self.use_pool(x)
+        if self.use_pool(x): 
             x = self.pool(x)
         return x
 
