@@ -20,8 +20,17 @@ class YOLOResNet(ResNet):
 
 def yolo_resnet(pretrained=None) -> YOLOResNet:
     # setup([3 4 6 3]) for resnet50
-    model = YOLOResNet(Bottleneck, [3, 4, 6, 3], pretrained)
+    model = YOLOResNet(Bottleneck, [3, 4, 6, 3])
     if pretrained is not None:
         state_dict = torch.load(pretrained)
         model.load_state_dict(state_dict)
     return model
+
+
+if __name__ == "__main__":
+    x = torch.randn([1, 3, 448, 448])
+    resnet = yolo_resnet('resnet50-19c8e357.pth')
+    print(resnet)
+
+    y = resnet(x)
+    print(y.size()) # (1, 1024, 7, 7)

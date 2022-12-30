@@ -1,6 +1,6 @@
-from transform import *
-from xml_to_dict import xml2dict
-from draw_bbox import draw
+from dataset.transform import *
+from dataset.xml_to_dict import xml2dict
+from dataset.draw_bbox import draw
 
 import os
 import json
@@ -30,6 +30,10 @@ class VOC2007and2012Dataset(Dataset):
             if not isinstance(root, list):
                 root = [root]
             layout_txt = [r'ImageSets/Main/test.txt']
+        elif mode == 'val':
+            root = [root[0], root[1]]
+            layout_txt = [r'ImageSets/Main/val.txt',
+                          r'ImageSets/Main/val.txt']
         assert layout_txt is not None, 'Unknown mode'
     
         self.transform = transform
@@ -78,8 +82,8 @@ class VOC2007and2012Dataset(Dataset):
   
 
 if __name__ == "__main__":
-    roots = [r'./../../datasets/VOC2007/VOCtrainval_06-Nov-2007/VOC2007',
-             r'./../../datasets/VOC2012/VOCtrainval_11-May-2012/VOC2012']
+    roots = [r'/home/tianqijian/datasets/VOC2007/VOCtrainval_06-Nov-2007/VOC2007',
+             r'/home/tianqijian/datasets/VOC2012/VOCtrainval_11-May-2012/VOC2012']
     transforms = Compose([
         ToTensor(),
         RandomHorizontalFlip(0.5),

@@ -21,7 +21,7 @@ def xml2dict(xml):
             data = add(data, c.tag, xml2dict(c))
     return data
 
-root = './../../datasets/VOC2007/VOCtrainval_06-Nov-2007/VOC2007'
+root = r'/home/tianqijian/datasets/VOC2007/VOCtrainval_06-Nov-2007/VOC2007'
 # construct the path for each annotation
 annotation_root = os.path.join(root, 'Annotations')
 annotation_list = os.listdir(annotation_root)

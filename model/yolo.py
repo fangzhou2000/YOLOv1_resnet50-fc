@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import torchvision
 
-from darknet import DarkNet
-from resnet import YOLOResNet
+from model.darknet import DarkNet
+from model.resnet import yolo_resnet
 
 
 class yolo(nn.Module):
@@ -19,7 +19,7 @@ class yolo(nn.Module):
         if backbone_name == 'darknet':
             self.backbone = DarkNet()
         elif backbone_name == 'resnet':
-            self.backbone == YOLOResNet()
+            self.backbone = yolo_resnet(pretrained=pretrain)
         self.conv = None
 
         assert self.backbone is not None, 'backbone type not support'
@@ -35,7 +35,7 @@ class yolo(nn.Module):
         # if x is a picture, batch_size == 1
         batch_size = x.size(0)
         x = self.backbone(x)
-        x = torch.flatten(x)
+        x = torch.flatten(x, 1)
         x = self.fc(x)
         # shift the dim, -1 means auto shift
         x = x.view(batch_size, self.s**2, -1)
@@ -89,7 +89,7 @@ class yolo_loss:
         :return: label: grid type: if this grid has object -> (center_x, center_y, w, h, conf)
                                    if this grid doesnot has object -> None
         """
-        output = [None for i in range(self.s ** 2)]
+        output = [None for _ in range(self.s ** 2)]
         size = self.image_size // self.s # get the size of grid
 
         n_bbox = label.size(0)
@@ -122,7 +122,7 @@ class yolo_loss:
         match = []
         conf = []
         with torch.no_grad():
-            input_bbox = input[:, :self.b*5].reshape(-1, self.b*5)
+            input_bbox = input[:, :self.b*5].reshape(-1, self.b, 5)
             ious = [match_get_iou(input_bbox[i], target[i], self.s, i) for i in range(self.s ** 2)]
             for iou in ious:
                 if iou is None:
@@ -149,7 +149,7 @@ class yolo_loss:
         ce_loss = nn.CrossEntropyLoss()
 
         input_bbox = input[:, :self.b*5].reshape(-1, self.b, 5)
-        input_class = input[:, self.b*5].reshape(-1, self.num_classes)
+        input_class = input[:, self.b*5:].reshape(-1, self.num_classes)
 
         input_bbox = torch.sigmoid(input_bbox)
         loss = torch.zeros([self.s ** 2], dtype=torch.float, device=self.device)
@@ -177,7 +177,7 @@ class yolo_loss:
                                                                    torch.sqrt(target[i][match[i], 3]), 2)))
                 obj_conf_target = torch.tensor(conf[i], dtype=torch.float, device=self.device)
                 l[2] = torch.sum(torch.pow(input_bbox[i, :, 4] - obj_conf_target, 2))
-                l[3] = ce_loss(input_class[i].unsqueeze(dim=0).repeat(target[i].szie(0), 1), 
+                l[3] = ce_loss(input_class[i].unsqueeze(dim=0).repeat(target[i].size(0), 1), 
                                target[i][:, 4].long())
 
             loss[i] = torch.sum(l)
@@ -326,7 +326,7 @@ if __name__ == "__main__":
     print(yolo_net)
     out = yolo_net(x)
     print(out)
-    print(out.size())
+    print(out.size()) # (1, 49, 49)
 
     s = 2
     b = 2
@@ -341,6 +341,6 @@ if __name__ == "__main__":
                             [100, 50, 198, 223, 1],
                             [30, 60, 150, 240, 1]], dtype=torch.float)]
 
-    criterion = yolo_loss('cpu', 2, 2, image_size, 2)
-    loss = criterion(input, target)
+    yolo_loss_obj = yolo_loss('cpu', 2, 2, image_size, 2)
+    loss = yolo_loss_obj(input, target)
     print(loss)

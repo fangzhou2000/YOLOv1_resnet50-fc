@@ -24,7 +24,7 @@ class Block(nn.Module):
 
     def forward(self, x):
         x = self.conv(x)
-        if self.use_pool(x): 
+        if self.use_pool: 
             x = self.pool(x)
         return x
 
@@ -61,12 +61,23 @@ class DarkNet(nn.Module):
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="leaky_relu")
 
-        def forward(self, x):
-            x = self.conv1(x)
-            x = self.conv2(x)
-            x = self.conv3(x)
-            x = self.conv4(x)
-            x = self.conv5(x)
-            x = self.conv6(x)
-            return x
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.conv3(x)
+        x = self.conv4(x)
+        x = self.conv5(x)
+        x = self.conv6(x)
+        return x
+        
 
+
+if __name__ == "__main__":
+    import torch
+
+    x = torch.randn([1, 3, 448, 448])
+
+    darknet = DarkNet()
+    print(darknet)
+    out = darknet(x)
+    print(out.size()) # (1, 1024, 7, 7)
