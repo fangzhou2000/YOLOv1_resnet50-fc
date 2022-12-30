@@ -68,7 +68,7 @@ class Resize:
 
         h, w = int(r_h * h), int(r_w * w)
         h, w = min(h, self.image_size), min(w, self.image_size)
-        label[:, [0, 2]] = label[:, [0. 2]] * w
+        label[:, [0, 2]] = label[:, [0, 2]] * w
         label[:, [1, 3]] = label[:, [1, 3]] * h
 
         T = torchvision.transforms.Resize([h, w])
@@ -77,6 +77,6 @@ class Resize:
         Padding = torch.nn.ZeroPad2d((0, self.image_size-w, 0, self.image_size-h))
         image = Padding(T(image))
 
-        assert list(image.size()) == [3, self.image_size - w, self.image_size]
+        assert list(image.size()) == [3, self.image_size, self.image_size]
 
         return image, label

@@ -9,9 +9,9 @@ colors = ['Pink', 'Crimson', 'Magenta', 'Indigo', 'BlueViolet',
           'Gold', 'Wheat', 'Orange', 'Gray', 'Red']
 
 def draw(image, bbox, classes, show_conf=False, conf_th=0.0):
-    keys = list(classes.key())
+    keys = list(classes.keys())
     values = list(classes.values())
-    font = ImageFont.truetype('arial.ttf', 10)
+    # font = ImageFont.truetype('arial.ttf', 10)
     transform = F.ToPILImage()
     image = transform(image)
     draw_image = ImageDraw.Draw(image)
@@ -24,10 +24,10 @@ def draw(image, bbox, classes, show_conf=False, conf_th=0.0):
         draw_image.rectangle(list(b[:4]), outline=colors[int(b[-1])], width=3)
         if show_conf:
             draw_image.text(list(b[:2] + 5), keys[values.index(int(b[-1]))] + ' {:.2f}'.format(b[-2]),
-                            fill=colors[int(b[-1])], font=font)
+                            fill=colors[int(b[-1])])
         else:
             draw_image.text(list(b[:2] + 5), keys[values.index(int(b[-1]))],
-                            fill=colors[int(b[-1])], font=font)
+                            fill=colors[int(b[-1])])
     
     plt.figure()
     plt.imshow(image)
