@@ -1,2 +1,3 @@
-a = [1, 2]
-print(a.size())
+a = [[1, 2]]
+a = a + [3]
+print(a)
