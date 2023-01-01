@@ -9,13 +9,13 @@ def voc_ap(rec, prec, use_07_metric=False):
     If use_07_metric is true, uses the VOC 07 11 point method
     """
     if use_07_metric:
-        ap = 0
+        ap = 0.
         for t in np.arange(0., 1.1, 0.1):
             if np.sum(rec >= t) == 0:
                 p = 0
             else:
                 p = np.max(prec[rec >= t])
-            ap = ap + p / 11
+            ap = ap + p / 11.
     else:
         # correct AP calculation
         # first append sentinel values at the end
@@ -81,9 +81,9 @@ def voc_eval(detpath,
     recs = {}
     for i, imagename in enumerate(imagenames):
         recs[imagename] = parse_rec(annopath.format(imagename))
-        if i % 100 == 0:
-             print('Reading annotation for {:d}/{:d}'.format(
-                 i + 1, len(imagenames)))
+        # if i % 100 == 0:
+            #  print('Reading annotation for {:d}/{:d}'.format(
+                #  i + 1, len(imagenames)))
 
     # extract gt objects for this class
     class_recs = {}
@@ -123,7 +123,7 @@ def voc_eval(detpath,
         bb = BB[d, :].astype(float)
         ovmax = -np.inf
         BBGT = R['bbox'].astype(float)
-
+        print(BBGT.size)
         if BBGT.size > 0:
             # compute overlaps
             # intersection
@@ -144,14 +144,14 @@ def voc_eval(detpath,
             jmax = np.argmax(overlaps)
         
         if ovmax > ovthresh:
-            if not R['difficult']['jmax']:
-                if not R['det']['jmax']:
-                    tp[d] = 1
+            if not R['difficult'][jmax]:
+                if not R['det'][jmax]:
+                    tp[d] = 1.
                     R['det'][jmax] = 1
                 else:
-                    fp[d] = -1
+                    fp[d] = 1.
         else:
-            fp[d] = 1
+            fp[d] = 1.
 
     # compute precision recall
     fp = np.cumsum(fp)

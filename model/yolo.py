@@ -97,17 +97,17 @@ class yolo_loss:
 
         label_grid[:, 0] = (label[:, 0] + label[:, 2]) / 2
         label_grid[:, 1] = (label[:, 1] + label[:, 3]) / 2
-        label_grid[:, 2] = abs(label[:, 0] - label[:, 2]) / 2
-        label_grid[:, 3] = abs(label[:, 1] - label[:, 3]) / 2
+        label_grid[:, 2] = abs(label[:, 0] - label[:, 2])
+        label_grid[:, 3] = abs(label[:, 1] - label[:, 3])
         label_grid[:, 4] = label[:, 4]
+
+        idx_x = [int(label_grid[i][0]) // size for i in range(n_bbox)]
+        idx_y = [int(label_grid[i][1]) // size for i in range(n_bbox)]
 
         label_grid[:, 0] = torch.div(torch.fmod(label_grid[:, 0], size), size)
         label_grid[:, 1] = torch.div(torch.fmod(label_grid[:, 1], size), size)
         label_grid[:, 2] = torch.div(label_grid[:, 2], self.image_size)
         label_grid[:, 3] = torch.div(label_grid[:, 3], self.image_size)
-
-        idx_x = [int(label_grid[i][0]) // size for i in range(n_bbox)]
-        idx_y = [int(label_grid[i][1]) // size for i in range(n_bbox)]
 
         for i in range(n_bbox):
             idx = idx_y[i] * self.s + idx_x[i]

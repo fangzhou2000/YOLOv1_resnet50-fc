@@ -12,7 +12,7 @@ class CFG:
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     root = r'/home/tianqijian/datasets/VOC2007/VOCtest_06-Nov-2007/VOC2007'
     class_path = r'./dataset/classes.json'
-    model_path = r'./trained_model'
+    model_path = r'./trained_model/yolo.pth'
     # save the test for each class
     detpath = r'det/{}.txt'
     annopath = r'/home/tianqijian/datasets/VOC2007/VOCtest_06-Nov-2007/VOC2007/Annotations/{}.xml'
@@ -71,8 +71,7 @@ def test():
             output = output.squeeze(dim=0).numpy().tolist()
             if len(output) > 0:
                 # concat
-                pred = [[image_name, output[i][-3] * output[i][-2]] + output[i][:4] + [int(output[i][-1])]
-                        for i in range(len(output))]
+                pred = [[image_name, output[i][-3] * output[i][-2]] + output[i][:4] + [int(output[i][-1])] for i in range(len(output))]
                 bboxes += pred
     det_list = [[] for _ in range(CFG.num_classes)]
     for b in bboxes:
@@ -86,13 +85,13 @@ def test():
             with open(file_path, 'w') as f:
                 f.write(txt)
             rec, prec, ap = voc_eval(CFG.detpath, CFG.annopath, CFG.imagesetfile, CFG.classname[idx])
-            print(rec)
-            print(prec)
+            print('rec: ', rec)
+            print('prec: ', prec)
             map += ap
-            print(ap)
+            print('ap: ', ap)
 
         map /= CFG.num_classes
-        print('mAP', map)
+        print('mAP: ', map)
 
 if __name__ == "__main__":
     test()
