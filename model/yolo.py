@@ -49,6 +49,7 @@ class yolo_loss:
         self.b = b
         self.image_size = image_size
         self.num_classes = num_classes
+        self.batch_size = 0
 
     def __call__(self, input, target):
         """

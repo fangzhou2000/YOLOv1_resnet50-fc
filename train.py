@@ -16,8 +16,8 @@ import warnings
 
 class CFG:
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-    roots = [r'/home/tianqijian/datasets/VOC2007/VOCtrainval_06-Nov-2007/VOC2007',
-             r'/home/tianqijian/datasets/VOC2012/VOCtrainval_11-May-2012/VOC2012']
+    roots = [r'/home/tianqijian/datasets/VOC2007/VOCdevkit/VOC2007',
+             r'/home/tianqijian/datasets/VOC2012/VOCdevkit/VOC2012']
     class_path = r'./dataset/classes.json'
     model_root = r'./trained_model'
     model_path = None

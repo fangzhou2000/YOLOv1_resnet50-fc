@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-def conv(in_ch, out_ch, k_size, stride=1, padding=1):
+def conv(in_ch, out_ch, k_size=3, stride=1, padding=1):
     return nn.Sequential(
         nn.Conv2d(in_ch, out_ch, k_size, stride, padding, bias=False),
         nn.LeakyReLU(0.1)

@@ -10,13 +10,13 @@ import json
 
 class CFG:
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-    root = r'/home/tianqijian/datasets/VOC2007/VOCtest_06-Nov-2007/VOC2007'
+    root = r'/home/tianqijian/datasets/VOC2007/VOCdevkit/VOC2007'
     class_path = r'./dataset/classes.json'
     model_path = r'./trained_model/yolo.pth'
     # save the test for each class
     detpath = r'det/{}.txt'
-    annopath = r'/home/tianqijian/datasets/VOC2007/VOCtest_06-Nov-2007/VOC2007/Annotations/{}.xml'
-    imagesetfile = r'/home/tianqijian/datasets/VOC2007/VOCtest_06-Nov-2007/VOC2007/ImageSets/Main/test.txt'
+    annopath = r'/home/tianqijian/datasets/VOC2007/VOCdevkit/VOC2007/Annotations/{}.xml'
+    imagesetfile = r'/home/tianqijian/datasets/VOC2007/VOCdevkit/VOC2007/ImageSets/Main/test.txt'
     classname = None
     test_range = None
     show_image = False
@@ -82,13 +82,17 @@ def test():
         for idx in range(CFG.num_classes):
             file_path = CFG.detpath.format(CFG.classname[idx])
             txt = '\n'.join([' '.join([str(i) for i in item]) for item in det_list[idx]])
+            if txt == '':
+                print("no")
+                continue
             with open(file_path, 'w') as f:
                 f.write(txt)
             rec, prec, ap = voc_eval(CFG.detpath, CFG.annopath, CFG.imagesetfile, CFG.classname[idx])
-            print('rec: ', rec)
-            print('prec: ', prec)
+            # print('rec: ', rec)
+            # print('prec: ', prec)
             map += ap
-            print('ap: ', ap)
+            # print('ap: ', ap)
+            print("class:{}, ap:{}".format(CFG.classname[idx], ap))
 
         map /= CFG.num_classes
         print('mAP: ', map)
