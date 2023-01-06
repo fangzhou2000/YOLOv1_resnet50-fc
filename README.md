@@ -1,6 +1,8 @@
 # YOLOv1
 Pytorch implementation of YOLOv1
 
+This implementation is pure resnet50 + fc, but its results is not so good, maybe there are bugs, I'll fix them later.
+
 ## Datasets
 Download Pascal VOC 2007 trainval and test datasets and Pascal VOC 2012 trainval datasets to the following paths:
 ```
